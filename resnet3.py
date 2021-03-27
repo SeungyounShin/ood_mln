@@ -182,7 +182,7 @@ class ResNet(nn.Module):
                                        dilate=replace_stride_with_dilation[1])
         self.layer4 = self._make_layer(block, 512, layers[3], stride=2,
                                        dilate=replace_stride_with_dilation[2])
-        #self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
+        self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         #self.fc = nn.Linear(512 * block.expansion, num_classes)
 
         for m in self.modules():
@@ -267,9 +267,10 @@ def _resnet(
 ) -> ResNet:
     model = ResNet(block, layers, **kwargs)
     if pretrained:
-        state_dict = load_url(model_urls[arch], progress=progress)
-        #remove_layers(state_dict, ['fc.'])
-        model.load_state_dict(state_dict, strict=False)
+        state_dict = torch.load('pretrained/resnet18-5c106cde.pth')
+        #state_dict = load_url(model_urls[arch], progress=progress)
+        remove_layers(state_dict, ['fc.'])
+        model.load_state_dict(state_dict)
     return model
 
 
